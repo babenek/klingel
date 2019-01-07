@@ -31,8 +31,7 @@
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
-#pragma link "RXShell"
-#pragma link "RXShell"
+#pragma link "Trayicon"
 #pragma resource "*.dfm"
 TKFormMain *KFormMain;
 //---------------------------------------------------------------------------
@@ -48,7 +47,7 @@ Signal(short int NUMBEEP)
 //Beep();
 
 	asm{
-	cli
+//	cli
 	mov BX, NUMBEEP
 	BEGIN:
 	push BX
@@ -83,7 +82,7 @@ Signal(short int NUMBEEP)
 	pop BX
 	dec BX
 	jnz BEGIN
-	sti
+//	sti
 	};
 
 }
@@ -121,8 +120,6 @@ __fastcall TKFormMain::TimerTimer(TObject *Sender)
 	StatusBarDateTime->Panels->Items[1]->Text = "Date: " + DateToStr(Date());
 
 	Timer->Enabled = false;
-	char *KeyEnter, ASCIIEnter = 13;
-	KeyEnter = &ASCIIEnter;
 
 	for (int x = 0; x < MengeCrank; x++)
 		if (CR[x].CRState!=DISABLE && (CR[x].CRDate==Date() || CR[x].CRState==DAILY && CR[x].CRDate < Date()))
@@ -132,6 +129,7 @@ __fastcall TKFormMain::TimerTimer(TObject *Sender)
 			{
 
 				Show();
+				Application->RestoreTopMosts();
 				WindowState = wsNormal;
 
 				switch (KFormCfg->RadioGroupSignal->ItemIndex)
@@ -141,8 +139,11 @@ __fastcall TKFormMain::TimerTimer(TObject *Sender)
 						{
 							OleContainer->CreateObjectFromFile(KFormCfg->ButtonOLE->Caption, true);
 							OleContainer->DoVerb(0);
-							//CR[x].CRState = DISABLE;
-							ListBoxRecordsKeyPress(Sender, *KeyEnter);
+							if (CR[x].CRState==DAILY)
+								CR[x].CRDate += 1;
+							else
+								CR[x].CRState = DISABLE;
+							//	ListBoxRecordsKeyPress(Sender, *KeyEnter);
 						}
 						break;
 					case 1: // проиграть вавку
@@ -150,8 +151,11 @@ __fastcall TKFormMain::TimerTimer(TObject *Sender)
 						{
 							for (int n = 0; n < KFormCfg->UpDownSpeaker->Position; n++)
 								sndPlaySound((KFormCfg->ButtonWAV->Caption).c_str(), SND_SYNC);
-							//CR[x].CRState = DISABLE;
-							ListBoxRecordsKeyPress(Sender, *KeyEnter);
+							if (CR[x].CRState==DAILY)
+								CR[x].CRDate += 1;
+							else
+								CR[x].CRState = DISABLE;
+							//	ListBoxRecordsKeyPress(Sender, *KeyEnter);
 						}
 						break;
 					case 2: // попищать спикером
@@ -162,7 +166,11 @@ __fastcall TKFormMain::TimerTimer(TObject *Sender)
 				AnsiString Message(CR[x].CRMessage);
 				if (Message.Length() && KFormCfg->CheckBoxMessage->Checked)
 					// показать сообщение
-					MessageDlg(Message, mtConfirmation, TMsgDlgButtons() << mbYes << mrNo, 0);
+					if (MessageDlg(Message, mtConfirmation, TMsgDlgButtons() << mbYes << mbNo, 0)==mrYes)
+						if (CR[x].CRState==DAILY)
+							CR[x].CRDate += 1;
+						else
+							CR[x].CRState = DISABLE;
 
 				if (CR[x].CRState==ENABLE)
 				{
@@ -259,7 +267,7 @@ __fastcall TKFormMain::ListBoxRecordsKeyPress(TObject *Sender, char &Key)
 			Add1Click(Sender);
 			break;
 		case 46:  // .
-			RxTrayIconDblClick(Sender);
+//			RxTrayIconDblClick(Sender);
 			break;
 	};
 
@@ -329,15 +337,6 @@ __fastcall TKFormMain::FormShow(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void
-__fastcall TKFormMain::RxTrayIconDblClick(TObject *Sender)
-{
-	if (KFormMain->Visible)
-		KFormMain->Hide();
-	else
-		KFormMain->Show();
-}
-//---------------------------------------------------------------------------
 
 void
 __fastcall TKFormMain::FormHide(TObject *Sender)
@@ -352,6 +351,7 @@ __fastcall TKFormMain::FormHide(TObject *Sender)
 	fwrite(&MengeCrank, sizeof(MengeCrank), 1, Stream);
 	fwrite(&CR, sizeof(CR), 1, Stream);
 	fclose(Stream);
+//	Hide();
 }
 //---------------------------------------------------------------------------
 
@@ -368,7 +368,7 @@ __fastcall TKFormMain::CloseKlingelClick(TObject *Sender)
 void
 __fastcall TKFormMain::PopupMenuTrayIconPopup(TObject *Sender)
 {
-	if (KFormMain->Visible)
+	if (Visible)
 		HideShow->Caption = "Спрятать";
 	else
 		HideShow->Caption = "Показать";
@@ -390,8 +390,26 @@ __fastcall TKFormMain::ConfigClick(TObject *Sender)
 void
 __fastcall TKFormMain::FormCloseQuery(TObject *Sender, bool &CanClose)
 {
+	FormHide(Sender);
 	if (MessageDlg("Выйти из программы?", mtConfirmation, TMsgDlgButtons() << mbYes << mbNo, 0)!=mrYes)
 		CanClose = false;
+}
+//---------------------------------------------------------------------------
+
+
+void
+__fastcall TKFormMain::HideShowClick(TObject *Sender)
+{
+	if (Visible)
+	{
+		Hide();     //
+		//Application->Minimize();
+	}
+	else
+	{
+		Show();  //
+		Application->Restore();
+	}
 }
 //---------------------------------------------------------------------------
 

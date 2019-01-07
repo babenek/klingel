@@ -13,11 +13,11 @@
 #include <Grids.hpp>
 #include <Menus.hpp>
 #include <ComCtrls.hpp>
-#include "RxShell.hpp"
-#include "RXShell.hpp"
 #include <Buttons.hpp>
 #include <ToolWin.hpp>
 #include <OleCtnrs.hpp>
+#include "Trayicon.h"
+#include <ImgList.hpp>
 //---------------------------------------------------------------------------
 #define MaxRec 365
 #define MaxChar 64
@@ -50,10 +50,11 @@ class TKFormMain : public TForm
 	TPopupMenu *PopupMenuTrayIcon;
 	TMenuItem *HideShow;
 	TMenuItem *Exit1;
-	TRxTrayIcon *RxTrayIcon;
 	TMenuItem *Config;
 	TOleContainer *OleContainer;
 	TMenuItem *About;
+	TTrayIcon *TrayIconKlingel;
+	TImageList *ImageListKlingel;
 	void
 	__fastcall TimerTimer(TObject *Sender);
 	void
@@ -75,8 +76,6 @@ class TKFormMain : public TForm
 	void
 	__fastcall FormShow(TObject *Sender);
 	void
-	__fastcall RxTrayIconDblClick(TObject *Sender);
-	void
 	__fastcall FormHide(TObject *Sender);
 
 	void
@@ -88,6 +87,8 @@ class TKFormMain : public TForm
 	__fastcall ConfigClick(TObject *Sender);
 	void
 	__fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
+	void
+	__fastcall HideShowClick(TObject *Sender);
 private:    // User declarations
 
 	int MengeCrank;    //     кол-тво записей()заводов

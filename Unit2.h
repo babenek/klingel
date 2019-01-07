@@ -8,8 +8,6 @@
 #include <Forms.hpp>
 #include <Mask.hpp>
 #include "ccalendr.h"
-#include "CurrEdit.hpp"
-#include "ToolEdit.hpp"
 #include <ComCtrls.hpp>
 #include <Grids.hpp>
 #include <ExtCtrls.hpp>
@@ -17,14 +15,14 @@
 class TKFormSlave : public TForm
 {
 	__published:    // IDE-managed Components
-		TMaskEdit*tttMaskEditTime;
+		///
 	TLabel *Label1;
 	TLabel *Label2;
 	TComboBox *ComboBox1;
 	TLabel *Label3;
 	TEdit *EditMessage;
 	TDateTimePicker *MaskEditDate;
-	TEdit *MaskEditTime;
+	TMaskEdit *MaskEditTime;
 	void
 	__fastcall FormActivate(TObject *Sender);
 

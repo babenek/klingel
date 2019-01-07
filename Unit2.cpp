@@ -9,8 +9,6 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "ccalendr"
-#pragma link "CurrEdit"
-#pragma link "ToolEdit"
 #pragma resource "*.dfm"
 TKFormSlave *KFormSlave;
 //---------------------------------------------------------------------------
@@ -28,7 +26,7 @@ __fastcall TKFormSlave::FormActivate(TObject *Sender)
 	MaskEditDate->Date = KFormMain->FS.CRDate;//DateToStr( KFormMain->FS.CRDate );
 	ComboBox1->ItemIndex = KFormMain->FS.CRState;
 	//EditMessage->Text="Завтра же на работу. Всем спать!";
-	EditMessage->Text = "";
+	EditMessage->Text = KFormMain->FS.CRMessage;
 	Execute = false;
 }
 //---------------------------------------------------------------------------

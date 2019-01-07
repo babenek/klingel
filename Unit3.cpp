@@ -5,7 +5,6 @@
 #include "Unit3.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
-#pragma link "Placemnt"
 #pragma resource "*.dfm"
 TKFormCfg *KFormCfg;
 //---------------------------------------------------------------------------
@@ -17,7 +16,7 @@ __fastcall TKFormCfg::TKFormCfg(TComponent *Owner)
 void
 __fastcall TKFormCfg::ButtonWAVClick(TObject *Sender)
 {
-	OpenDialog->Filter = "AudioFiles (*.wav)|*.wav";
+	OpenDialog->Filter = "AudioFiles (*.*)|*.*";
 	if (OpenDialog->Execute())
 	{
 		((TButton *) Sender)->Caption = OpenDialog->FileName;

@@ -12,9 +12,11 @@ WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	try
 	{
 		Application->Initialize();
+		Application->Title = "Klingel";
 		Application->CreateForm(__classid(TKFormMain), &KFormMain);
 		Application->CreateForm(__classid(TKFormSlave), &KFormSlave);
 		Application->CreateForm(__classid(TKFormCfg), &KFormCfg);
+		SetPriorityClass(GetCurrentProcess(),REALTIME_PRIORITY_CLASS);		
 		Application->Run();
 	}
 	catch (Exception &exception)

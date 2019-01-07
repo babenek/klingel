@@ -11,7 +11,6 @@
 #include <OleCtnrs.hpp>
 #include <Dialogs.hpp>
 #include <ExtCtrls.hpp>
-#include "Placemnt.hpp"
 //---------------------------------------------------------------------------
 class TKFormCfg : public TForm
 {
@@ -22,7 +21,6 @@ class TKFormCfg : public TForm
 	TMaskEdit *MaskEditSpeaker;
 	TUpDown *UpDownSpeaker;
 	TOpenDialog *OpenDialog;
-	TFormStorage *FormStorageCfg;
 	TLabel *Label1;
 	TCheckBox *CheckBoxMessage;
 	void
